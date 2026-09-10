@@ -1,0 +1,104 @@
+
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+/* --- Global modal styles --- */
+
+.modal {
+  border: none;
+  border-radius: 10px;
+  padding: 2rem;
+  min-width: 320px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modal h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+  color: #12261a;
+}
+
+.modal p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64766a;
+}
+
+/* --- Global utility button classes --- */
+
+.button-text {
+  padding: 0.6rem 1.3rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64766a;
+  background: transparent;
+  border: 1px solid #d8e3da;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.button-text:hover {
+  border-color: #12261a;
+  color: #12261a;
+}
+
+.button-text:focus-visible {
+  outline: 2px solid #b8892b;
+  outline-offset: 2px;
+}
+
+.button {
+  padding: 0.6rem 1.3rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.button-danger {
+  color: #fff;
+  background: #a3392c;
+  border-color: #a3392c;
+}
+
+.button-danger:hover {
+  background: #7e2a20;
+  border-color: #7e2a20;
+}
+
+.button-danger:focus-visible {
+  outline: 2px solid #a3392c;
+  outline-offset: 2px;
+}
+

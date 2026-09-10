@@ -1,0 +1,416 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+.pnm-app {
+    --ink: #2b2620;
+    --paper: #faf8f4;
+    --line: #e2ddd2;
+    --wine: #7a2e3a;
+    --wine-dark: #5e222b;
+    --gold: #a9822f;
+    --muted: #7a7266;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    min-height: 100%;
+    padding: 2.5rem 1.5rem 4rem;
+}
+
+.pnm-shell {
+    max-width: 880px;
+    margin: 0 auto;
+}
+
+.pnm-header {
+    margin-bottom: 2rem;
+}
+
+.pnm-header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2.1rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.35rem;
+}
+
+.pnm-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.search-row {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.cat-select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--line);
+    background: #f3f0e9;
+}
+
+.cat-select select {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.7rem 2rem 0.7rem 1rem;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.cat-select svg {
+    position: absolute;
+    right: 0.7rem;
+    pointer-events: none;
+    color: var(--muted);
+}
+
+.search-row input {
+    flex: 1;
+    border: none;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.7rem 0.9rem;
+    background: transparent;
+    min-width: 0;
+}
+
+.search-row input:focus {
+    outline: none;
+}
+
+.search-row .divider,
+.divider {
+    width: 1px;
+    background: var(--line);
+}
+
+.search-btn,
+.adv-btn {
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 1rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.search-btn {
+    color: #fff;
+    background: var(--wine);
+}
+
+.search-btn:hover {
+    background: var(--wine-dark);
+}
+
+.adv-btn:hover {
+    color: var(--ink);
+}
+
+.pnm-app *:focus-visible {
+    outline: 2px solid var(--wine);
+    outline-offset: 2px;
+}
+
+.results-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 1.5rem 0 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.results-bar strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.clear-link {
+    border: none;
+    background: none;
+    color: var(--wine);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.clear-link:hover {
+    text-decoration: underline;
+}
+
+table.roster {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+table.roster th {
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding: 0 0.6rem 0.55rem;
+    letter-spacing: 0.02em;
+}
+
+table.roster td {
+    padding: 0.65rem 0.6rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+    vertical-align: top;
+}
+
+table.roster tr:last-child td {
+    border-bottom: none;
+}
+
+.status-pill {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: #f3f0e9;
+    color: var(--ink);
+}
+
+.interest-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.1rem 0.4rem;
+    margin: 0 0.25rem 0.25rem 0;
+}
+
+.empty-state {
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    padding: 2.2rem 1.5rem;
+    text-align: center;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.empty-state strong {
+    display: block;
+    color: var(--ink);
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(43, 38, 32, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 50;
+}
+
+.modal-panel {
+    background: var(--paper);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 1.3rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.modal-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.icon-btn {
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.2rem;
+}
+
+.icon-btn:hover {
+    color: var(--ink);
+}
+
+.modal-body {
+    padding: 1.2rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.field-row {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.field-row .field-group {
+    flex: 1;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.field-group span,
+.field-group legend {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 0;
+}
+
+.field-group input {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 0.5rem 0.65rem;
+    font: inherit;
+    font-size: 0.9rem;
+    background: #fff;
+}
+
+.field-group input:focus {
+    outline: none;
+    border-color: var(--wine);
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: var(--ink);
+}
+
+.chip-active {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: #fff;
+}
+
+.mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding-top: 0.2rem;
+    border-top: 1px solid var(--line);
+}
+
+.mode-toggle>span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.segmented {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.segmented button {
+    border: none;
+    background: #fff;
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.segmented button+button {
+    border-left: 1px solid var(--line);
+}
+
+.seg-active {
+    background: var(--gold) !important;
+    color: #fff !important;
+}
+
+.modal-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.3rem;
+    border-top: 1px solid var(--line);
+}
+
+.btn-quiet {
+    border: none;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-quiet:hover {
+    color: var(--ink);
+}
+
+.btn-primary {
+    border: none;
+    background: var(--wine);
+    color: #fff;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.55rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: var(--wine-dark);
+}

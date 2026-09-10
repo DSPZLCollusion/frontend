@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
+
+.page {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #f5fbf6;
+    background: #007a33;
+}
+
+/* --- Sidebar --- */
+
+.sidebar {
+    align-self: start;
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fffdf9;
+    border: 1px solid #d8e3da;
+    border-radius: 14px;
+    padding: 2rem 1.5rem;
+}
+
+.photoWrap {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 1.25rem;
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #b8892b;
+}
+
+.photoFallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #0f4a24, #007a33);
+    color: #f5fbf6;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2.25rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #12261a;
+    margin: 0 0 0.6rem;
+    line-height: 1.2;
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.classYear {
+    font-size: 0.85rem;
+    color: #64766a;
+}
+
+.statusTag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #f5fbf6;
+    background: #007a33;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+}
+
+.contactList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+    padding-top: 1.1rem;
+    border-top: 1px solid #d8e3da;
+}
+
+.contactLink {
+    font-size: 0.85rem;
+    color: #0f4a24;
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.contactLink:hover {
+    text-decoration: underline;
+    text-decoration-color: #b8892b;
+}
+
+.contactLink:focus-visible {
+    outline: 2px solid #b8892b;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* --- Main content --- */
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.section {
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(245, 251, 246, 0.25);
+}
+
+.section:first-child {
+    padding-top: 0;
+    border-top: none;
+}
+
+.sectionTitle {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #b8892b;
+    display: inline-block;
+}
+
+.sectionBody {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #f2f7f0;
+    margin: 0;
+}
+
+.interestList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.interestTag {
+    font-size: 0.85rem;
+    color: #12261a;
+    background: #fffdf9;
+    border: 1px solid #b8892b;
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+}
+
+/* --- Actions bar --- */
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    max-width: 960px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.5rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.actions button {
+    padding: 0.6rem 1.4rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* First button = destructive (Delete) */
+.actions button:first-child {
+    color: #a3392c;
+    background: transparent;
+    border-color: #a3392c;
+}
+
+.actions button:first-child:hover {
+    background: #a3392c;
+    color: #fff;
+}
+
+.actions button:first-child:focus-visible {
+    outline: 2px solid #a3392c;
+    outline-offset: 2px;
+}
+
+/* Edit link — styled as a primary button */
+.editLink {
+    display: inline-block;
+    padding: 0.6rem 1.4rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #f5fbf6;
+    background: #007a33;
+    border: 1px solid #007a33;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.editLink:hover {
+    background: #005c26;
+    border-color: #005c26;
+}
+
+.editLink:focus-visible {
+    outline: 2px solid #b8892b;
+    outline-offset: 2px;
+}
+
+/* --- Modal form actions --- */
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.formActions button {
+    padding: 0.6rem 1.3rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* Cancel */
+.formActions button:first-child {
+    color: #64766a;
+    background: transparent;
+    border: 1px solid #d8e3da;
+}
+
+.formActions button:first-child:hover {
+    border-color: #12261a;
+    color: #12261a;
+}
+
+.formActions button:first-child:focus-visible {
+    outline: 2px solid #b8892b;
+    outline-offset: 2px;
+}
+
+/* Confirm delete */
+.formActions button:last-child {
+    color: #fff;
+    background: #a3392c;
+    border: 1px solid #a3392c;
+}
+
+.formActions button:last-child:hover {
+    background: #7e2a20;
+    border-color: #7e2a20;
+}
+
+.formActions button:last-child:focus-visible {
+    outline: 2px solid #a3392c;
+    outline-offset: 2px;
+}
+
+/* --- Error text --- */
+
+.errorText {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    color: #a3392c;
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 720px) {
+    .page {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        padding: 1.75rem 1.25rem 3rem;
+    }
+
+    .sidebar {
+        position: static;
+    }
+}
