@@ -66,6 +66,15 @@
     grid-row: 2;
 }
 
+.lastContacted {
+    font-size: 0.78rem;
+    color: #64766a;
+    margin: 0;
+    text-align: right;
+    grid-column: 3;
+    grid-row: 3;
+}
+
 @media (max-width: 560px) {
     .content {
         grid-template-columns: 48px 1fr;
@@ -83,6 +92,12 @@
 
     .contact:first-of-type,
     .contact:last-of-type {
+        grid-row: auto;
+    }
+
+    .lastContacted {
+        grid-column: 2;
+        text-align: left;
         grid-row: auto;
     }
 }

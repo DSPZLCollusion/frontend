@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as PnmsRouteImport } from './routes/pnms'
 import { Route as PnmsIndexRouteImport } from './routes/pnms/index'
 import { Route as PnmsPnmIdRouteImport } from './routes/pnms/$pnmId'
@@ -20,6 +21,11 @@ import { Route as PnmsPnmIdEditRouteImport } from './routes/pnms/$pnmId.edit'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PnmsRoute = PnmsRouteImport.update({
@@ -55,6 +61,7 @@ const PnmsPnmIdEditRoute = PnmsPnmIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/pnms': typeof PnmsRouteWithChildren
   '/pnms/$pnmId': typeof PnmsPnmIdRouteWithChildren
   '/pnms/create': typeof PnmsCreateRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/pnms/create': typeof PnmsCreateRoute
   '/pnms': typeof PnmsIndexRoute
   '/pnms/$pnmId/edit': typeof PnmsPnmIdEditRoute
@@ -72,6 +80,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
   '/pnms': typeof PnmsRouteWithChildren
   '/pnms/$pnmId': typeof PnmsPnmIdRouteWithChildren
   '/pnms/create': typeof PnmsCreateRoute
@@ -83,6 +92,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
     | '/pnms'
     | '/pnms/$pnmId'
     | '/pnms/create'
@@ -90,10 +100,17 @@ export interface FileRouteTypes {
     | '/pnms/$pnmId/edit'
     | '/pnms/$pnmId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pnms/create' | '/pnms' | '/pnms/$pnmId/edit' | '/pnms/$pnmId'
+  to:
+    | '/'
+    | '/login'
+    | '/pnms/create'
+    | '/pnms'
+    | '/pnms/$pnmId/edit'
+    | '/pnms/$pnmId'
   id:
     | '__root__'
     | '/'
+    | '/login'
     | '/pnms'
     | '/pnms/$pnmId'
     | '/pnms/create'
@@ -104,6 +121,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoginRoute: typeof LoginRoute
   PnmsRoute: typeof PnmsRouteWithChildren
 }
 
@@ -114,6 +132,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pnms': {
@@ -191,6 +216,7 @@ const PnmsRouteWithChildren = PnmsRoute._addFileChildren(PnmsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
   PnmsRoute: PnmsRouteWithChildren,
 }
 export const routeTree = rootRouteImport

@@ -6,6 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import appCss from '../styles.css?url'
 import Navbar from '../components/Navbar'
 import { queryClient } from '../util/http'
+import { AuthProvider } from '#/util/auth'
 
 function NotFound() {
   return (
@@ -44,10 +45,13 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Navbar />
-      <Outlet />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Navbar />
+        <Outlet />
+      </QueryClientProvider>
+    </AuthProvider>
+
   )
 }
 

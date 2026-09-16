@@ -44,6 +44,7 @@ export type Pnm = {
     email: string;
     phone_number: string;
     photo_url?: string;
+    last_contacted?: string | null;
 };
 
 export type CreatePnm = Omit<Pnm, 'id'>;

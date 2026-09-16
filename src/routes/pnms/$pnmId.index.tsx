@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import styles from './$pnmId.module.css';
 import DEFAULT_IMG from '../../assets/Default_PNM_Image.jpg';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { deletePnm, fetchPnm, queryClient } from '#/util/http';
+import { deletePnm, fetchPnm, updatePnmContacted, queryClient } from '#/util/http';
 import { useState } from 'react';
 import Modal from '#/UI/Modal';
 
@@ -26,12 +26,23 @@ function RouteComponent() {
     mutationFn: deletePnm,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['events'],
+        queryKey: ['pnms'],
         refetchType: 'none'
       })
       navigate({ to: '/pnms' });
     }
   });
+
+  const { mutate: mutateContacted, isPending: isPendingContacted } = useMutation({
+    mutationFn: updatePnmContacted,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pnm', pnmId] });
+    }
+  });
+
+  function handleMarkContacted() {
+    mutateContacted({ id: pnmId });
+  }
 
   function handleStartDelete() {
     setIsDeleting(true);
@@ -56,7 +67,7 @@ function RouteComponent() {
   }
 
   if (data) {
-    const { photo_url, first_name, last_name, class_year, status_type, email, phone_number } = data.info;
+    const { photo_url, first_name, last_name, class_year, status_type, email, phone_number, last_contacted } = data.info;
     const off_campus = data.off_campus;
     const on_campus = data.on_campus;
     const interests = data.interests;
@@ -122,6 +133,15 @@ function RouteComponent() {
               </ul>
             </section>
           )}
+
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Last Contacted</h2>
+            <p className={styles.sectionBody}>
+              {last_contacted
+                ? new Date(last_contacted).toLocaleString()
+                : 'Never'}
+            </p>
+          </section>
         </main>
       </>
     )
@@ -162,7 +182,14 @@ function RouteComponent() {
         <button className="button-text" onClick={handleStartDelete}>
           Delete
         </button>
-        <Link to="edit" className={styles.editLink}>Edit</Link>
+        <button
+          className={styles.contactedBtn}
+          onClick={handleMarkContacted}
+          disabled={isPendingContacted}
+        >
+          {isPendingContacted ? 'Saving…' : 'Mark Contacted'}
+        </button>
+        <Link to="/pnms/$pnmId/edit" params={{ pnmId }} className={styles.editLink}>Edit</Link>
       </div>
     </>
   )

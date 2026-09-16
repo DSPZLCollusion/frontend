@@ -210,6 +210,36 @@
     outline-offset: 2px;
 }
 
+/* Mark Contacted button — secondary/outline */
+.contactedBtn {
+    display: inline-block;
+    padding: 0.6rem 1.4rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #007a33;
+    background: transparent;
+    border: 1px solid #007a33;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.contactedBtn:hover:not(:disabled) {
+    background: #007a33;
+    color: #f5fbf6;
+}
+
+.contactedBtn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.contactedBtn:focus-visible {
+    outline: 2px solid #b8892b;
+    outline-offset: 2px;
+}
+
 /* Edit link — styled as a primary button */
 .editLink {
     display: inline-block;

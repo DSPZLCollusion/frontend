@@ -7,7 +7,6 @@ import type {
     Dorm,
     OffCampusHousing,
     OnCampusHousing,
-    PnmDetails,
     StatusType,
 } from "#/util/pnmModel";
 import styles from "./Form.module.css";

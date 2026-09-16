@@ -11,6 +11,7 @@ type PnmBlockProps = {
     email: string;
     phone_number: string;
     photo_url: string;
+    last_contacted?: string | null;
 };
 
 export default function PnmBlock({
@@ -22,6 +23,7 @@ export default function PnmBlock({
     email,
     phone_number,
     photo_url,
+    last_contacted,
 }: PnmBlockProps) {
     return (
         <Link to="/pnms/$pnmId" params={{ pnmId: id }}>
@@ -40,6 +42,11 @@ export default function PnmBlock({
                     </h3>
                     <p className={styles.contact}>{email}</p>
                     <p className={styles.contact}>{phone_number}</p>
+                    {last_contacted && (
+                        <p className={styles.lastContacted}>
+                            Contacted {new Date(last_contacted).toLocaleDateString()}
+                        </p>
+                    )}
                 </div>
             </article>
         </Link>

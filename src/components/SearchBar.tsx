@@ -12,6 +12,7 @@ const DORMS = [
     "SCHARPENBERG", "LAKESIDE", "PERCOPO",
     "APARTMENTS WEST", "APARTMENTS EAST", "TBA",
 ];
+const LAST_CONTACTED = ["NEVER", "Last Day", "Last Week", "Last Month"]
 
 const CATEGORIES = [
     { value: "first_name", label: "First name" },
@@ -20,6 +21,7 @@ const CATEGORIES = [
     { value: "class_year", label: "Class year" },
     { value: "status_type", label: "Status" },
     { value: "dorm", label: "Dorm" },
+    { value: "last_contacted", label: "Last contacted" },
     { value: "interests", label: "Interest" },
 ] as const;
 
@@ -32,6 +34,7 @@ const emptyFilters: SearchFilters = {
     class_year: [],
     status_type: [],
     dorm: [],
+    last_contacted: [],
     interests: "",
 };
 
@@ -125,6 +128,13 @@ function AdvancedModal({ initial, initialMode, onClose, onApply }: AdvancedModal
                     <CheckboxGroup label="Status" options={STATUSES} selected={draft.status_type ?? []} onChange={(v) => set("status_type", v)} />
                     <CheckboxGroup label="Dorm" options={DORMS} selected={draft.dorm ?? []} onChange={(v) => set("dorm", v)} />
 
+                    <CheckboxGroup
+                        label="Last contacted"
+                        options={LAST_CONTACTED}
+                        selected={draft.last_contacted ?? []}
+                        onChange={(v) => set("last_contacted", v)}
+                    />
+
                     <label className={styles["field-group"]}>
                         <span>Interests</span>
                         <input value={draft.interests ?? ""} onChange={(e) => set("interests", e.target.value)} placeholder="e.g. Volleyball, Choir" />
@@ -173,6 +183,7 @@ export default function SearchBar({ allPnms }: SearchBarProps) {
     const [quickValue, setQuickValue] = useState("");
     const [filters, setFilters] = useState<SearchFilters>(emptyFilters);
     const [matchMode, setMatchMode] = useState<"ALL" | "ANY">("ALL");
+    const [advancedActive, setAdvancedActive] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [results, setResults] = useState<Pnm[] | null>(null);
     const [loading, setLoading] = useState(false);
@@ -186,6 +197,7 @@ export default function SearchBar({ allPnms }: SearchBarProps) {
         if (filters.class_year?.length) parts.push(`class year: ${filters.class_year.join(", ")}`);
         if (filters.status_type?.length) parts.push(`status: ${filters.status_type.join(", ")}`);
         if (filters.dorm?.length) parts.push(`dorm: ${filters.dorm.join(", ")}`);
+        if (filters.last_contacted?.length) parts.push(`last contacted: ${filters.last_contacted.join(", ")}`);
         if (filters.interests) parts.push(`interests: ${filters.interests}`);
         return parts.join(matchMode === "ANY" ? " · or · " : " · and · ");
     }, [filters, matchMode]);
@@ -208,7 +220,7 @@ export default function SearchBar({ allPnms }: SearchBarProps) {
 
     const runQuick = () => {
         const next: SearchFilters = { ...emptyFilters };
-        if (category === "class_year" || category === "status_type" || category === "dorm") {
+        if (category === "class_year" || category === "status_type" || category === "dorm" || category === "last_contacted") {
             next[category] = quickValue.split(",").map((s) => s.trim()).filter(Boolean);
         } else {
             next[category] = quickValue;
@@ -221,12 +233,15 @@ export default function SearchBar({ allPnms }: SearchBarProps) {
     const applyAdvanced = (draft: SearchFilters, mode: "ALL" | "ANY") => {
         setFilters(draft);
         setMatchMode(mode);
+        setAdvancedActive(true);
+        setQuickValue("");
         executeSearch(draft, mode);
     };
 
     const clearSearch = () => {
         setFilters(emptyFilters);
         setQuickValue("");
+        setAdvancedActive(false);
         setResults(null);
         setError(null);
     };
@@ -253,16 +268,17 @@ export default function SearchBar({ allPnms }: SearchBarProps) {
                     </div>
                     <input
                         value={quickValue}
-                        onChange={(e) => setQuickValue(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && runQuick()}
+                        onChange={(e) => { setAdvancedActive(false); setQuickValue(e.target.value); }}
+                        onKeyDown={(e) => e.key === "Enter" && !advancedActive && runQuick()}
                         placeholder={`Search by ${CATEGORIES.find((c) => c.value === category)!.label.toLowerCase()}...`}
+                        disabled={advancedActive}
                     />
                     <div className={styles.divider} />
                     <button className={styles["adv-btn"]} onClick={() => setModalOpen(true)}>
                         <SlidersHorizontal size={15} />
                         Advanced
                     </button>
-                    <button className={styles["search-btn"]} onClick={runQuick} disabled={loading}>
+                    <button className={styles["search-btn"]} onClick={runQuick} disabled={loading || advancedActive}>
                         <Search size={15} />
                         {loading ? "Searching…" : "Search"}
                     </button>
@@ -306,6 +322,7 @@ export default function SearchBar({ allPnms }: SearchBarProps) {
                                     email={info.email}
                                     phone_number={info.phone_number}
                                     photo_url={info.photo_url}
+                                    last_contacted={info.last_contacted}
                                 />
                             </li>
                         ))}

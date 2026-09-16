@@ -29,7 +29,7 @@ function RouteComponent() {
 
       return { previousPnm }
     },
-    onError: (error, data, context) => {
+    onError: (_error, _data, context) => {
       queryClient.setQueryData(['pnms', pnmId], context?.previousPnm);
     },
     onSettled: () => {
