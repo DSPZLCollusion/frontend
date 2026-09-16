@@ -9,7 +9,11 @@ import tailwindcss from '@tailwindcss/vite'
 const isNetlify = process.env.NETLIFY === 'true'
 
 const config = defineConfig(async () => {
-  const plugins = [devtools(), tailwindcss(), tanstackStart(), viteReact()]
+  const plugins = [devtools(), tailwindcss(), tanstackStart({
+    spa: {
+      enabled: true,
+    }
+  }), viteReact()]
 
   if (isNetlify) {
     const { default: netlify } = await import('@netlify/vite-plugin-tanstack-start')
