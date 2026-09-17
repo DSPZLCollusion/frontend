@@ -9,7 +9,7 @@ export const Route = createFileRoute('/pnms')({
                 search: { redirect: location.href },
             })
         }
-        const res = await fetch(`${import.meta.env.VITE_LOCAL_BACKEND}/auth/verify-token`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/verify-token`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`
