@@ -3,7 +3,7 @@ import type { CreatePnmBody } from './pnmModel';
 
 export const queryClient = new QueryClient();
 
-const backend_url = import.meta.env.VITE_LOCAL_BACKEND as string;
+const backend_url = import.meta.env.VITE_BACKEND_URL as string;
 
 function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
     const token = typeof window !== 'undefined' ? window.localStorage.getItem('auth-token') : null;
