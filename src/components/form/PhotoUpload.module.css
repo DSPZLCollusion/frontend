@@ -1,0 +1,96 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.4rem;
+}
+
+.fieldLabel {
+    margin-bottom: 0.45rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+}
+
+.hiddenInput {
+    display: none;
+}
+
+/* ---- Drop zone ---- */
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 2rem 1rem;
+    border: 1.5px dashed var(--rule);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.dropzone:hover,
+.dropzone:focus-visible {
+    border-color: var(--brass);
+    background: #f7f4ec;
+    outline: none;
+}
+
+.dropzoneDragging {
+    border-color: var(--brass);
+    background: #f7f4ec;
+}
+
+.dropzoneIcon {
+    font-size: 1.5rem;
+    color: var(--brass-dim);
+}
+
+.dropzoneText {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.dropzoneHint {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+
+/* ---- Preview ---- */
+.preview {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+}
+
+.previewImg {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 1.5px solid var(--rule);
+}
+
+.removeBtn {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--paper);
+    background: var(--error);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.removeBtn:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 2px;
+}
