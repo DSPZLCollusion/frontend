@@ -26,7 +26,7 @@ function RouteComponent() {
     mutationFn: deletePnm,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['pnms'],
+        queryKey: ['pnms', pnmId],
         refetchType: 'none'
       })
       navigate({ to: '/pnms' });
@@ -70,7 +70,8 @@ function RouteComponent() {
     const { photo_url, first_name, last_name, class_year, status_type, email, phone_number, last_contacted } = data.info;
     const off_campus = data.off_campus;
     const on_campus = data.on_campus;
-    const interests = data.interests;
+    const interests = Array.isArray(data.interests) ? data.interests.filter(Boolean) : [];
+    const events = Array.isArray(data.events) ? data.events : [];
     content = (
       <>
         <aside className={styles.sidebar}>
@@ -88,7 +89,7 @@ function RouteComponent() {
           </h1>
 
           <div className={styles.metaRow}>
-            <span className={styles.classYear}>Class of {class_year}</span>
+            <span className={styles.classYear}>{class_year}</span>
             {status_type && (
               <span className={styles.statusTag}>{status_type}</span>
             )}
@@ -115,13 +116,13 @@ function RouteComponent() {
               )}
               {on_campus && (
                 <p className={styles.sectionBody}>
-                  {on_campus.dorm}, room {on_campus.room_number}
+                  {on_campus.dorm} {on_campus.room_number}
                 </p>
               )}
             </section>
           )}
 
-          {interests.length > 0 && (
+          {interests.length > 0 ? (
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Interests</h2>
               <ul className={styles.interestList}>
@@ -132,7 +133,33 @@ function RouteComponent() {
                 ))}
               </ul>
             </section>
-          )}
+          ) :
+            (
+              <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Interests</h2>
+                <h3>No Interests</h3>
+              </section>
+            )
+          }
+
+          {events.length > 0 ? (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Events Attended</h2>
+              <ul className={styles.interestList}>
+                {events.map((event) => (
+                  <li key={(event as { id?: string; event_id?: string }).id ?? (event as { id?: string; event_id?: string }).event_id ?? event.event_name} className={styles.interestTag}>
+                    {event.event_name}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) :
+            (
+              <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Events Attended</h2>
+                <h3>No events attended</h3>
+              </section>
+            )}
 
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Last Contacted</h2>

@@ -1,18 +1,10 @@
 import { QueryClient } from '@tanstack/react-query';
-import type { CreatePnmBody } from './pnmModel';
+import type { CreatePnmBody, PnmBodyDetails } from './pnmModel';
+import { authFetch } from './auth';
 
 export const queryClient = new QueryClient();
 
 const backend_url = import.meta.env.VITE_BACKEND_URL as string;
-
-function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
-    const token = typeof window !== 'undefined' ? window.localStorage.getItem('auth-token') : null;
-    const headers = new Headers(options.headers);
-    if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-    }
-    return fetch(url, { ...options, headers });
-}
 
 export type Pnm = {
     id: string;
@@ -54,8 +46,16 @@ function buildSearchParams(filters: SearchFilters): URLSearchParams {
     return params;
 }
 
-export async function fetchPnms({ signal }: { signal: AbortSignal }): Promise<Pnm[]> {
-    const url = `${backend_url}/pnm`;
+export type PnmPage = {
+    data: Pnm[];
+    nextCursor: string | null;
+}
+
+export async function fetchPnms({ signal, cursor }: { signal: AbortSignal, cursor?: string | null }): Promise<PnmPage> {
+    const params = new URLSearchParams();
+    if (cursor) params.set('cursor', cursor);
+
+    const url = `${backend_url}/pnm?${params}`;
 
     const response = await authFetch(url, { signal });
 
@@ -67,12 +67,10 @@ export async function fetchPnms({ signal }: { signal: AbortSignal }): Promise<Pn
     }
 
     const json = await response.json();
-    const pnms = json as Pnm[];
-
-    return pnms;
+    return { data: json.data, nextCursor: json.nextCursor ?? null };
 }
 
-export async function fetchPnm({ id, signal }: { id: string, signal: AbortSignal }): Promise<CreatePnmBody> {
+export async function fetchPnm({ id, signal }: { id: string, signal: AbortSignal }): Promise<PnmBodyDetails> {
     const url = `${backend_url}/pnm/${id}`;
 
     const response = await authFetch(url, { signal });
@@ -85,7 +83,7 @@ export async function fetchPnm({ id, signal }: { id: string, signal: AbortSignal
     }
 
     const json = await response.json();
-    const pnm = json as CreatePnmBody;
+    const pnm = json as PnmBodyDetails;
 
     return pnm;
 }
@@ -126,6 +124,8 @@ export async function updatePnm({ id, pnmDetails }: { id: string, pnmDetails: Cr
         error.info = await response.json().catch(() => response.statusText);
         throw error;
     }
+
+    console.log(pnmDetails);
 
     return response.json();
 }
@@ -186,3 +186,19 @@ export async function updatePnmContacted({ id }: { id: string }) {
 
     return response.json();
 }
+
+// export async function fetchEvents({ signal }: { signal: AbortSignal }): Promise<PnmEvent[]> {
+//     const url = `${backend_url}/events`;
+
+//     const response = await authFetch(url, { signal });
+
+//     if (!response.ok) {
+//         const error = new Error('An error occurred while fetching the events') as Error & { code: number; info: unknown };
+//         error.code = response.status;
+//         error.info = await response.json();
+//         throw error;
+//     }
+
+//     const json = await response.json();
+//     return json as PnmEvent[];
+// }

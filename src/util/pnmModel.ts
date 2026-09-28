@@ -1,9 +1,21 @@
+import type { eventDetails, EventFormDetails } from "./event";
+
 export type CreatePnmBody = {
     info: CreatePnm;
     on_campus: OnCampusHousing | null;
     off_campus: OffCampusHousing | null;
     interests: string[];
+    events: EventFormDetails[];
 };
+
+
+export type PnmBodyDetails = {
+    info: CreatePnm;
+    on_campus: OnCampusHousing | null;
+    off_campus: OffCampusHousing | null;
+    interests: string[];
+    events: eventDetails[];
+}
 
 export type OnCampusHousing = {
     dorm: Dorm;
@@ -54,3 +66,4 @@ export type StatusType = 'DELTA' | 'SIGMA' | 'PHI';
 export type Dorm = 'SPEED' | 'BSB' | 'BLUMBERG' | 'MEES' | 'DEMING' |
     'SCHARPENBERG' | 'LAKESIDE' | 'PERCOPO' |
     'APARTMENTS WEST' | 'APARTMENTS EAST' | 'TBA';
+export type Attendance = 'ATTENDED' | 'CANCELED'

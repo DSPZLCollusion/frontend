@@ -39,6 +39,7 @@ function RouteComponent() {
 
   function handleSubmit(formData: CreatePnmBody) {
     mutate({ id: pnmId, pnmDetails: formData });
+    console.log(formData);
     navigate({ to: "/pnms/$pnmId", params: { pnmId } });
   }
 
