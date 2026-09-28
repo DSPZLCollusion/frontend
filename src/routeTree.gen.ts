@@ -10,8 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PnmsRouteImport } from './routes/pnms'
+import { Route as EventsIndexRouteImport } from './routes/events/index'
+import { Route as EventsCreateRouteImport } from './routes/events/create'
 import { Route as PnmsIndexRouteImport } from './routes/pnms/index'
 import { Route as PnmsPnmIdRouteImport } from './routes/pnms/$pnmId'
 import { Route as PnmsCreateRouteImport } from './routes/pnms/create'
@@ -23,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -32,6 +40,16 @@ const PnmsRoute = PnmsRouteImport.update({
   id: '/pnms',
   path: '/pnms',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EventsRoute,
+} as any)
+const EventsCreateRoute = EventsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => EventsRoute,
 } as any)
 const PnmsIndexRoute = PnmsIndexRouteImport.update({
   id: '/',
@@ -61,10 +79,13 @@ const PnmsPnmIdEditRoute = PnmsPnmIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/events': typeof EventsRouteWithChildren
   '/login': typeof LoginRoute
   '/pnms': typeof PnmsRouteWithChildren
+  '/events/create': typeof EventsCreateRoute
   '/pnms/$pnmId': typeof PnmsPnmIdRouteWithChildren
   '/pnms/create': typeof PnmsCreateRoute
+  '/events/': typeof EventsIndexRoute
   '/pnms/': typeof PnmsIndexRoute
   '/pnms/$pnmId/edit': typeof PnmsPnmIdEditRoute
   '/pnms/$pnmId/': typeof PnmsPnmIdIndexRoute
@@ -72,7 +93,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/events/create': typeof EventsCreateRoute
   '/pnms/create': typeof PnmsCreateRoute
+  '/events': typeof EventsIndexRoute
   '/pnms': typeof PnmsIndexRoute
   '/pnms/$pnmId/edit': typeof PnmsPnmIdEditRoute
   '/pnms/$pnmId': typeof PnmsPnmIdIndexRoute
@@ -80,10 +103,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/events': typeof EventsRouteWithChildren
   '/login': typeof LoginRoute
   '/pnms': typeof PnmsRouteWithChildren
+  '/events/create': typeof EventsCreateRoute
   '/pnms/$pnmId': typeof PnmsPnmIdRouteWithChildren
   '/pnms/create': typeof PnmsCreateRoute
+  '/events/': typeof EventsIndexRoute
   '/pnms/': typeof PnmsIndexRoute
   '/pnms/$pnmId/edit': typeof PnmsPnmIdEditRoute
   '/pnms/$pnmId/': typeof PnmsPnmIdIndexRoute
@@ -92,10 +118,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/events'
     | '/login'
     | '/pnms'
+    | '/events/create'
     | '/pnms/$pnmId'
     | '/pnms/create'
+    | '/events/'
     | '/pnms/'
     | '/pnms/$pnmId/edit'
     | '/pnms/$pnmId/'
@@ -103,17 +132,22 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/events/create'
     | '/pnms/create'
+    | '/events'
     | '/pnms'
     | '/pnms/$pnmId/edit'
     | '/pnms/$pnmId'
   id:
     | '__root__'
     | '/'
+    | '/events'
     | '/login'
     | '/pnms'
+    | '/events/create'
     | '/pnms/$pnmId'
     | '/pnms/create'
+    | '/events/'
     | '/pnms/'
     | '/pnms/$pnmId/edit'
     | '/pnms/$pnmId/'
@@ -121,6 +155,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EventsRoute: typeof EventsRouteWithChildren
   LoginRoute: typeof LoginRoute
   PnmsRoute: typeof PnmsRouteWithChildren
 }
@@ -132,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -147,6 +189,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/pnms'
       preLoaderRoute: typeof PnmsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/events/': {
+      id: '/events/'
+      path: '/'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof EventsRoute
+    }
+    '/events/create': {
+      id: '/events/create'
+      path: '/create'
+      fullPath: '/events/create'
+      preLoaderRoute: typeof EventsCreateRouteImport
+      parentRoute: typeof EventsRoute
     }
     '/pnms/': {
       id: '/pnms/'
@@ -186,6 +242,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface EventsRouteChildren {
+  EventsCreateRoute: typeof EventsCreateRoute
+  EventsIndexRoute: typeof EventsIndexRoute
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsCreateRoute: EventsCreateRoute,
+  EventsIndexRoute: EventsIndexRoute,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
+
 interface PnmsPnmIdRouteChildren {
   PnmsPnmIdEditRoute: typeof PnmsPnmIdEditRoute
   PnmsPnmIdIndexRoute: typeof PnmsPnmIdIndexRoute
@@ -216,6 +285,7 @@ const PnmsRouteWithChildren = PnmsRoute._addFileChildren(PnmsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EventsRoute: EventsRouteWithChildren,
   LoginRoute: LoginRoute,
   PnmsRoute: PnmsRouteWithChildren,
 }

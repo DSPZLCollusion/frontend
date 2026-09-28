@@ -1,15 +1,21 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { FormEvent, KeyboardEvent, ReactNode } from 'react'
 import Input from "./Input";
 import type {
+    Attendance,
     ClassYear,
     CreatePnmBody,
+    PnmBodyDetails,
     Dorm,
     OffCampusHousing,
     OnCampusHousing,
     StatusType,
 } from "#/util/pnmModel";
 import styles from "./Form.module.css";
+import PhotoUpload from "./PhotoUpload";
+import { uploadImage } from "#/util/blob";
+import { fetchEvents, type eventDetails } from "#/util/event";
 
 const dormTypes: Dorm[] = [
     "SPEED",
@@ -80,7 +86,7 @@ type FormErrors = Partial<Record<
 >>;
 
 type FormProps = {
-    inputData?: CreatePnmBody | null;
+    inputData?: PnmBodyDetails | null;
     onSubmit: (body: CreatePnmBody) => void;
     isPending?: boolean;
     error?: unknown;
@@ -90,12 +96,33 @@ type FormProps = {
 export default function Form({ inputData, onSubmit, isPending = false, error, children }: FormProps) {
     const [isOnCampus, setIsOnCampus] = useState(() => !inputData?.off_campus?.street_address);
 
-    // Interests are the one field that need live state — they're built up as
-    // chips rather than a single input value, so `defaultValue` doesn't apply.
     const [interestInput, setInterestInput] = useState("");
     const [interests, setInterests] = useState<string[]>(inputData?.interests ?? []);
 
+    const [events, setEvents] = useState<(eventDetails & { status?: Attendance })[]>(inputData?.events ?? []);
+    const [selectedEventIds, setSelectedEventIds] = useState<string[]>([]);
+    const [eventStatusInput, setEventStatusInput] = useState<Attendance>('ATTENDED');
+
+    const { data: availableEvents = [], isLoading: eventsLoading } = useQuery({
+        queryKey: ['events'],
+        queryFn: ({ signal }) => fetchEvents({ signal }),
+    });
+
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoRemoved, setPhotoRemoved] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    // Last successful upload, so retrying after a failed save reuses it instead of
+    // uploading the same file again and leaving an orphaned blob behind.
+    const uploadedPhotoRef = useRef<{ file: File; url: string } | null>(null);
+
     const [errors, setErrors] = useState<FormErrors>({});
+
+    function _handlePhotoChange(file: File | null) {
+        setPhotoFile(file);
+        setPhotoRemoved(file === null);
+        setUploadError(null);
+    }
 
     function handleCampusSwitch(nextIsOnCampus: boolean) {
         if (nextIsOnCampus === isOnCampus) return;
@@ -120,6 +147,32 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
 
     function removeInterest(target: string) {
         setInterests((prev) => prev.filter((interest) => interest !== target));
+    }
+
+    function toggleEventSelection(eventId: string) {
+        setSelectedEventIds((prev) =>
+            prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]
+        );
+    }
+
+    function getEventId(e: { id?: string; event_id?: string }) {
+        return String(e.id ?? e.event_id ?? '');
+    }
+
+    function addEvents() {
+        if (selectedEventIds.length === 0) return;
+        const toAdd = availableEvents
+            .filter((e) => selectedEventIds.includes(getEventId(e)))
+            .filter((e) => !events.some((added) => getEventId(added) === getEventId(e)))
+            .map((e) => ({ ...e, status: eventStatusInput }));
+
+        setEvents((prev) => [...prev, ...toAdd]);
+        setSelectedEventIds([]);
+        setEventStatusInput('ATTENDED');
+    }
+
+    function removeEvent(eventId: string) {
+        setEvents((prev) => prev.filter((e) => getEventId(e) !== eventId));
     }
 
     function handleInterestKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -167,13 +220,38 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
         return next;
     }
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        if (isUploading) return;
         const formData = new FormData(event.currentTarget);
 
         const nextErrors = validate(formData);
         setErrors(nextErrors);
         if (Object.keys(nextErrors).length > 0) return;
+
+        let photoUrl: string | undefined;
+        if (photoFile) {
+            const cached = uploadedPhotoRef.current;
+            if (cached?.file === photoFile) {
+                photoUrl = cached.url;
+            } else {
+                setIsUploading(true);
+                setUploadError(null);
+                try {
+                    photoUrl = await uploadImage(photoFile);
+                    uploadedPhotoRef.current = { file: photoFile, url: photoUrl };
+                } catch (err) {
+                    setUploadError(
+                        err instanceof Error ? err.message : "Photo upload failed. Please try again.",
+                    );
+                    return;
+                } finally {
+                    setIsUploading(false);
+                }
+            }
+        } else if (!photoRemoved) {
+            photoUrl = inputData?.info?.photo_url;
+        }
 
         const onCampusHousing: OnCampusHousing | null = isOnCampus
             ? { dorm: field(formData, "dorm") as Dorm, room_number: field(formData, "room-number") }
@@ -188,7 +266,17 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
             }
             : null;
 
-        const photoUrl = field(formData, "photo-url");
+        const pendingSelectedEvents = availableEvents
+            .filter((e) => selectedEventIds.includes(getEventId(e)))
+            .filter((e) => !events.some((added) => getEventId(added) === getEventId(e)))
+            .map((e) => ({ ...e, status: eventStatusInput }));
+
+        const allEvents = [...events, ...pendingSelectedEvents];
+
+        const formattedEvents = allEvents.map((event) => ({
+            id: getEventId(event),
+            event_status: (event as { status?: string }).status ?? 'ATTENDED',
+        }));
 
         const body: CreatePnmBody = {
             info: {
@@ -203,6 +291,7 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
             on_campus: onCampusHousing,
             off_campus: offCampusHousing,
             interests,
+            events: formattedEvents,
         };
 
         onSubmit(body);
@@ -264,7 +353,7 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
 
                     <div className={cx(styles.field, errors.statusType && styles.fieldError)}>
                         <label htmlFor="status-type" className={styles.fieldLabel}>
-                            Chapter<span className={styles.fieldRequired} aria-hidden="true"> *</span>
+                            Status<span className={styles.fieldRequired} aria-hidden="true"> *</span>
                         </label>
                         <select
                             id="status-type"
@@ -272,7 +361,7 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
                             className={styles.fieldInput}
                             defaultValue={inputData?.info?.status_type ?? ''}
                         >
-                            <option value="">Select a chapter</option>
+                            <option value="">Select a status</option>
                             {statusTypes.map((status) => (
                                 <option key={status.value} value={status.value}>
                                     {status.label}
@@ -305,13 +394,11 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
                     />
                 </div>
 
-                <Input
-                    label="Photo URL"
-                    id="photo-url"
-                    type="url"
-                    placeholder="Optional"
-                    defaultValue={inputData?.info?.photo_url ?? ''}
-                />
+                {/* PhotoUpload temporarily disabled — re-enable when ready */}
+                {/* <PhotoUpload
+                    defaultUrl={inputData?.info?.photo_url}
+                    onChange={_handlePhotoChange}
+                /> */}
             </section>
 
             <section className={styles.pnmSection}>
@@ -450,7 +537,92 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
                 </div>
             </section>
 
+            <section className={styles.pnmSection}>
+                <h2 className={styles.pnmSectionTitle}>Events Attended</h2>
+                {events.length > 0 && (
+                    <div className={styles.interestsChips}>
+                        {events.map((event) => {
+                            const eventId = getEventId(event);
+                            return (
+                                <span className={styles.interestChip} key={eventId}>
+                                    {event.event_name}
+                                    {' — '}
+                                    {new Date(event.event_date).toLocaleDateString()}
+                                    {/* {event.status === 'CANCELED' && ' (Canceled)'} */}
+                                    <button
+                                        type="button"
+                                        className={styles.interestChipRemove}
+                                        aria-label={`Remove ${event.event_name}`}
+                                        onClick={() => removeEvent(eventId)}
+                                    >
+                                        &times;
+                                    </button>
+                                </span>
+                            );
+                        })}
+                    </div>
+                )}
+                <div className={styles.field}>
+                    <label className={styles.fieldLabel}>Available Events</label>
+                    <div className={styles.eventListContainer}>
+                        {eventsLoading ? (
+                            <p className={styles.eventListEmpty}>Loading events…</p>
+                        ) : availableEvents.filter((e) => !events.some((added) => getEventId(added) === getEventId(e))).length === 0 ? (
+                            <p className={styles.eventListEmpty}>No additional events to add.</p>
+                        ) : (
+                            availableEvents
+                                .filter((e) => !events.some((added) => getEventId(added) === getEventId(e)))
+                                .map((e) => {
+                                    const eventId = getEventId(e);
+                                    return (
+                                        <label key={eventId} className={styles.eventCheckboxLabel}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedEventIds.includes(eventId)}
+                                                onChange={() => toggleEventSelection(eventId)}
+                                            />
+                                            <span>
+                                                {e.event_name}
+                                                {' — '}
+                                                {new Date(e.event_date).toLocaleDateString()}
+                                            </span>
+                                        </label>
+                                    );
+                                })
+                        )}
+                    </div>
+                </div>
+
+                <div className={cx(styles.row, styles.row2)}>
+                    <div className={styles.field}>
+                        <label htmlFor="event-status" className={styles.fieldLabel}>Status for Selected</label>
+                        <select
+                            id="event-status"
+                            className={styles.fieldInput}
+                            value={eventStatusInput}
+                            onChange={(e) => setEventStatusInput(e.target.value as Attendance)}
+                        >
+                            <option value="ATTENDED">Attended</option>
+                            <option value="CANCELED">Canceled</option>
+                        </select>
+                    </div>
+                    <div className={cx(styles.field, styles.fieldAlignEnd)}>
+                        <button
+                            type="button"
+                            className={styles.pnmSubmit}
+                            onClick={addEvents}
+                            disabled={selectedEventIds.length === 0}
+                        >
+                            Add Selected ({selectedEventIds.length})
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <div className={styles.pnmFormFooter}>
+                {uploadError && (
+                    <p className={styles.pnmFormErrorText} role="alert">{uploadError}</p>
+                )}
                 {error != null && (
                     <p className={styles.pnmFormErrorText} role="alert">
                         {error instanceof Error ? error.message : "Something went wrong. Please try again."}
@@ -458,8 +630,8 @@ export default function Form({ inputData, onSubmit, isPending = false, error, ch
                 )}
                 <div className={styles.pnmFormActions}>
                     {children}
-                    <button type="submit" className={styles.pnmSubmit} disabled={isPending}>
-                        {isPending ? "Saving..." : "Save"}
+                    <button type="submit" className={styles.pnmSubmit} disabled={isPending || isUploading}>
+                        {isUploading ? "Uploading photo..." : isPending ? "Saving..." : "Save"}
                     </button>
                 </div>
             </div>
