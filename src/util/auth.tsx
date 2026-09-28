@@ -27,7 +27,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const token = window.localStorage.getItem('auth-token')
         if (token) {
             // Validate token with your API
-            fetch(`${backend_url}/auth/validate-token`, {
+            fetch(`${backend_url}/auth/verify-token`, {
+                method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((response) => response.json())
@@ -98,4 +99,13 @@ export function useAuth() {
         throw new Error('useAuth must be used within an AuthProvider')
     }
     return context
+}
+
+export function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const token = typeof window !== 'undefined' ? window.localStorage.getItem('auth-token') : null;
+    const headers = new Headers(options.headers);
+    if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+    }
+    return fetch(url, { ...options, headers });
 }
