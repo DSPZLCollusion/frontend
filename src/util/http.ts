@@ -125,8 +125,6 @@ export async function updatePnm({ id, pnmDetails }: { id: string, pnmDetails: Cr
         throw error;
     }
 
-    console.log(pnmDetails);
-
     return response.json();
 }
 

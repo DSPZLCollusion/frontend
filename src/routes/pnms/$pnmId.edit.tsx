@@ -20,27 +20,15 @@ function RouteComponent() {
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: updatePnm,
-    onMutate: async (data) => {
-      const newPnm = data.pnmDetails;
-      await queryClient.cancelQueries({ queryKey: ['pnms', pnmId] });
-
-      const previousPnm = queryClient.getQueryData(['pnms', pnmId]);
-      queryClient.setQueryData(['pnms', pnmId], newPnm);
-
-      return { previousPnm }
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pnm', pnmId] });
+      queryClient.invalidateQueries({ queryKey: ['pnms'] });
+      navigate({ to: "/pnms/$pnmId", params: { pnmId } });
     },
-    onError: (_error, _data, context) => {
-      queryClient.setQueryData(['pnms', pnmId], context?.previousPnm);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['pnms', pnmId] });
-    }
   });
 
   function handleSubmit(formData: CreatePnmBody) {
     mutate({ id: pnmId, pnmDetails: formData });
-    console.log(formData);
-    navigate({ to: "/pnms/$pnmId", params: { pnmId } });
   }
 
   function handleCancel() {

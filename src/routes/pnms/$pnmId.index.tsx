@@ -25,10 +25,8 @@ function RouteComponent() {
   const { mutate, isPending: isPendingDeletion, isError: isErrorDeleting, error: deleteError } = useMutation({
     mutationFn: deletePnm,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['pnms', pnmId],
-        refetchType: 'none'
-      })
+      queryClient.removeQueries({ queryKey: ['pnm', pnmId] });
+      queryClient.invalidateQueries({ queryKey: ['pnms'] });
       navigate({ to: '/pnms' });
     }
   });
@@ -37,6 +35,7 @@ function RouteComponent() {
     mutationFn: updatePnmContacted,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pnm', pnmId] });
+      queryClient.invalidateQueries({ queryKey: ['pnms'] });
     }
   });
 
