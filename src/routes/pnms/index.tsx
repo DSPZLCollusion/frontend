@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchPnms } from '#/util/http';
-import SearchBar from '#/components/SearchBar';
+import SearchBar from '#/components/searchbar/SearchBar';
 
 export const Route = createFileRoute('/pnms/')({
   component: RouteComponent,

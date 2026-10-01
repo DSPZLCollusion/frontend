@@ -28,7 +28,6 @@ function PnmsCreate() {
 
     return (
         <div className="p-8">
-            <h1 className="text-4xl font-bold">Create PNMS</h1>
             <Form onSubmit={handleSubmit} isPending={isPending} error={isError ? error : undefined}>
                 <button type="button" onClick={handleCancel}>
                     Cancel
