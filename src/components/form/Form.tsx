@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { FormEvent, KeyboardEvent, ReactNode } from 'react'
+import type { FormEvent, KeyboardEvent } from 'react'
 import Input from "./Input";
 import type {
     Attendance,
     ClassYear,
     CreatePnmBody,
-    PnmBodyDetails,
     Dorm,
     OffCampusHousing,
     OnCampusHousing,
@@ -17,81 +16,8 @@ import PhotoUpload from "./PhotoUpload";
 import { uploadImage } from "#/util/blob";
 import { fetchEvents, type eventDetails } from "#/util/event";
 
-const dormTypes: Dorm[] = [
-    "SPEED",
-    "BSB",
-    "BLUMBERG",
-    "MEES",
-    "DEMING",
-    "SCHARPENBERG",
-    "LAKESIDE",
-    "PERCOPO",
-    "APARTMENTS WEST",
-    "APARTMENTS EAST",
-    "TBA",
-];
-
-const classTypes: ClassYear[] = [
-    "FRESHMAN",
-    "SOPHOMORE",
-    "JUNIOR",
-    "SENIOR",
-    "SUPER_SENIOR",
-];
-
-const statusTypes: { value: StatusType; label: string }[] = [
-    { value: "SIGMA", label: "Sigma" },
-    { value: "DELTA", label: "Delta" },
-    { value: "PHI", label: "Phi" },
-];
-
-const usStates = [
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-    "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-    "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
-];
-
-function formatClassYear(year: ClassYear): string {
-    return year
-        .toLowerCase()
-        .split("_")
-        .map((word) => word[0].toUpperCase() + word.slice(1))
-        .join(" ");
-}
-
-function cx(...classes: Array<string | false | undefined>): string {
-    return classes.filter(Boolean).join(" ");
-}
-
-function field(formData: FormData, name: string): string {
-    return ((formData.get(name) as string) ?? "").trim();
-}
-
-type FormErrors = Partial<Record<
-    | "firstName"
-    | "lastName"
-    | "classYear"
-    | "statusType"
-    | "email"
-    | "phoneNumber"
-    | "dorm"
-    | "roomNumber"
-    | "streetAddress"
-    | "city"
-    | "state"
-    | "zipCode",
-    string
->>;
-
-type FormProps = {
-    inputData?: PnmBodyDetails | null;
-    onSubmit: (body: CreatePnmBody) => void;
-    isPending?: boolean;
-    error?: unknown;
-    children?: ReactNode;
-};
+import { dormTypes, classTypes, statusTypes, usStates, formatClassYear, cx, field } from "#/components/form/formData";
+import type { FormErrors, FormProps } from "#/components/form/formData";
 
 export default function Form({ inputData, onSubmit, isPending = false, error, children }: FormProps) {
     const [isOnCampus, setIsOnCampus] = useState(() => !inputData?.off_campus?.street_address);
