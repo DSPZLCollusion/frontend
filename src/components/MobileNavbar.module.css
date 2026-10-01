@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.25rem;
+    background: #007a33;
+    border-bottom: 2px solid #b8892b;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.brand {
+    color: #f5fbf6;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #f5fbf6;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+}
+
+.hamburger:focus-visible {
+    outline: 2px solid #d9b45c;
+    outline-offset: 2px;
+}
+
+.hamburgerIcon {
+    width: 22px;
+    height: 22px;
+}
+
+/* ── Slide-down panel ─────────────────────────────────────── */
+
+.panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #005c26;
+    border-bottom: 2px solid #b8892b;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Shared row style for top-level links and section toggles */
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #f5fbf6;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid rgba(184, 137, 43, 0.25);
+    transition: background 0.12s ease;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.item:hover {
+    background: #007a33;
+    color: #ffffff;
+}
+
+.item:focus-visible {
+    outline: 2px solid #d9b45c;
+    outline-offset: -2px;
+}
+
+.item:global(.active) {
+    color: #d9b45c;
+}
+
+/* Section toggle is a <button>, reset appearance */
+.sectionToggle {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+}
+
+/* ── Chevron ──────────────────────────────────────────────── */
+
+.chevron {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.2s ease;
+}
+
+.chevronOpen .chevron {
+    transform: rotate(180deg);
+}
+
+/* ── Sub-items ────────────────────────────────────────────── */
+
+.subItems {
+    display: flex;
+    flex-direction: column;
+    background: #004a1e;
+}
+
+.subItem {
+    display: block;
+    color: #d4edd9;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.7rem 2rem;
+    border-bottom: 1px solid rgba(184, 137, 43, 0.15);
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+.subItem:last-child {
+    border-bottom: none;
+}
+
+.subItem:hover {
+    background: #005c26;
+    color: #ffffff;
+}
+
+.subItem:focus-visible {
+    outline: 2px solid #d9b45c;
+    outline-offset: -2px;
+}
+
+.subItem:global(.active) {
+    color: #d9b45c;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .item,
+    .subItem,
+    .chevron {
+        transition: none;
+    }
+}

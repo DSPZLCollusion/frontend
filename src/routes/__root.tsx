@@ -1,12 +1,29 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
 // import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 // import { TanStackDevtools } from '@tanstack/react-devtools'
+import { useEffect, useState } from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
 
 import appCss from '../styles.css?url'
 import Navbar from '../components/Navbar'
+import MobileNavbar from '#/components/MobileNavbar'
 import { queryClient } from '../util/http'
 import { AuthProvider } from '#/util/auth'
+
+function useIsMobile(breakpoint = 640) {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < breakpoint
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`)
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [breakpoint])
+
+  return isMobile
+}
 
 function NotFound() {
   return (
@@ -44,14 +61,15 @@ export const Route = createRootRoute({
 })
 
 function RootLayout() {
+  const isMobile = useIsMobile()
+
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <Navbar />
+        {isMobile ? <MobileNavbar /> : <Navbar />}
         <Outlet />
       </QueryClientProvider>
     </AuthProvider>
-
   )
 }
 
